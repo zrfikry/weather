@@ -1,6 +1,6 @@
 const apiKey = 'd238be0dd35e788820b4560ba501a96e' // openweather api key
 const cityId = '1621177' // Yogyakarta
-const apiUrl = 'http://api.openweathermap.org/data/2.5'
+const apiUrl = 'https://api.openweathermap.org/data/2.5'
 const iconUrl = 'https://openweathermap.org/img/w'
 
 document.body.onload = init
