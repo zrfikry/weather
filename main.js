@@ -29,14 +29,14 @@ const forecastListSection = document.querySelector('#forecastList')
 const render = function () {
   if ( weatherData !== null ) {
     let mainHeader = document.createElement('h2')
-    mainHeader.innerText = 'Current Weather'
+    mainHeader.innerText = 'Cuaca Sekarang'
     currentWeather.appendChild( mainHeader )
     currentWeather.appendChild( renderWeatherBox( weatherData, 'current' ) )
   }
 
   if ( weather5Days !== null ) {
     let mainHeader = document.createElement('h2')
-    mainHeader.innerText = 'Weather Forecast'
+    mainHeader.innerText = 'Ramalan Cuaca'
     forecastListSection.appendChild( mainHeader )
 
     let dateList = []
@@ -159,12 +159,12 @@ const renderWeatherBox = function ( data = {}, type = 'current', index = null ) 
   if (type === 'current') {
     // Sunrise
     let newPhar = document.createElement('p')
-    newPhar.innerHTML = `Sunrise <span>${ renderDate(data.sys.sunrise).split(' ')[1] }</span>`
+    newPhar.innerHTML = `Terbit <span>${ renderDate(data.sys.sunrise).split(' ')[1] }</span>`
     newSection.appendChild( newPhar )
 
     // Sunset
     newPhar = document.createElement('p')
-    newPhar.innerHTML = `Sunset <span>${ renderDate(data.sys.sunset).split(' ')[1] }</span>`
+    newPhar.innerHTML = `Terbenam <span>${ renderDate(data.sys.sunset).split(' ')[1] }</span>`
     newSection.appendChild( newPhar )
   }
 
@@ -172,27 +172,17 @@ const renderWeatherBox = function ( data = {}, type = 'current', index = null ) 
   newPhar = document.createElement('p')
 
   const arrows = ["↑", "↗", "→", "↘", "↓", "↙", "←", "↖"]
-  newPhar.innerHTML = `Wind <span>${ arrows[ Math.floor(( (data.wind.deg + 22) % 360 ) / 45) ] } ${ data.wind.speed } m/s</span>`
+  newPhar.innerHTML = `Angin <span>${ arrows[ Math.floor(( (data.wind.deg + 22) % 360 ) / 45) ] } ${ data.wind.speed } m/s</span>`
   newSection.appendChild( newPhar )
 
   // Humidity
   newPhar = document.createElement('p')
-  newPhar.innerHTML = `Humidity <span>${ data.main.humidity }%</span>`
+  newPhar.innerHTML = `Kelembaban <span>${ data.main.humidity }%</span>`
   newSection.appendChild( newPhar )
 
   //Pressure
   newPhar = document.createElement('p')
-  newPhar.innerHTML = `Pressure <span>${ data.main.pressure } hPa</span>`
-  newSection.appendChild( newPhar )
-
-  //Sea Level
-  newPhar = document.createElement('p')
-  newPhar.innerHTML = `Sea Level <span>${ data.main.sea_level } hPa</span>`
-  newSection.appendChild( newPhar )
-
-  //Ground Level
-  newPhar = document.createElement('p')
-  newPhar.innerHTML = `Ground Level <span>${ data.main.grnd_level } hPa</span>`
+  newPhar.innerHTML = `Tekanan <span>${ data.main.pressure } hPa</span>`
   newSection.appendChild( newPhar )
 
   //add the section to box
