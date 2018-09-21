@@ -2,6 +2,7 @@ body {
   font-family: 'Roboto', sans-serif;
   background: #e2e1e0;
   padding: 1rem;
+  text-align: center;
 }
 
 .weather-box {

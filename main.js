@@ -43,7 +43,7 @@ const render = function () {
     
     // create date list
     weather5Days.list.map(( forecast ) => {
-      let dt = new Date(forecast.dt*1000)
+      let dt = new Date( forecast.dt*1000 )
       let d = `0${ dt.getDate() }`.slice(-2)
       let m = `0${ dt.getMonth() }`.slice(-2)
       let y = dt.getFullYear()
