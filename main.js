@@ -8,8 +8,8 @@ document.body.onload = init
 let weatherData = null
 let weather5Days = null
 async function init () {
-  weatherData = await fetchData(`${ apiUrl }/weather?id=${ cityId }&appid=${ apiKey }`)
-  weather5Days = await fetchData(`${ apiUrl }/forecast?id=${ cityId }&appid=${ apiKey }`)
+  weatherData = await fetchData(`${ apiUrl }/weather?id=${ cityId }&appid=${ apiKey }&units=metric`)
+  weather5Days = await fetchData(`${ apiUrl }/forecast?id=${ cityId }&appid=${ apiKey }&units=metric`)
   render()
 }
 
@@ -36,7 +36,7 @@ const render = function () {
 
   if ( weather5Days !== null ) {
     let mainHeader = document.createElement('h2')
-    mainHeader.innerText = '5 Days Forecast'
+    mainHeader.innerText = 'Weather Forecast'
     forecastListSection.appendChild( mainHeader )
 
     let dateList = []
@@ -47,22 +47,27 @@ const render = function () {
       let d = `0${ dt.getDate() }`.slice(-2)
       let m = `0${ dt.getMonth() }`.slice(-2)
       let y = dt.getFullYear()
+      let h = dt.getHours()
       let fullDate = `${ d }/${ m }/${ y }`
       let dateIndex = dateList.findIndex( ( item ) => item.date === fullDate )
-      if ( dateList[ dateIndex ] === undefined ) {
-        dateList.push({ date: fullDate, list: [] })
-      }
-    })
 
-    // add data to date list item
-    weather5Days.list.map(( forecast ) => {
-      let dt = new Date(forecast.dt*1000)
-      let d = `0${ dt.getDate() }`.slice(-2)
-      let m = `0${ dt.getMonth() }`.slice(-2)
-      let y = dt.getFullYear()
-      let fullDate = `${ d }/${ m }/${ y }`
-      let dateIndex = dateList.findIndex( ( item ) => item.date === fullDate )
-      dateList[ dateIndex ].list.push( forecast )
+      if ( dateList[ dateIndex ] === undefined ) {
+        // check if date index is unavailable in date list
+        // then add new object and fill the list with the first forecast item
+        dateList.push({ date: fullDate, list: [] })
+      } else {
+        // if date index is available
+        // add the rest data with the same date
+        if ( h > 7 && h <= 10 && dateList[ dateIndex ].list[0] === undefined ) { // morning
+          dateList[ dateIndex ].list[0] = forecast
+        } else if (h > 10 && h < 15 && dateList[ dateIndex ].list[1] === undefined) { // noon
+          dateList[ dateIndex ].list[1] = forecast
+        } else if (h > 15 && h < 19 && dateList[ dateIndex ].list[2] === undefined) { // after noon
+          dateList[ dateIndex ].list[2] = forecast
+        } else if (h > 19 && h < 23 && dateList[ dateIndex ].list[3] === undefined) { // night
+          dateList[ dateIndex ].list[3] = forecast
+        }
+      }
     })
 
     // render 5 days forecast
@@ -75,27 +80,28 @@ const render = function () {
 
       newSeparator.appendChild(separatorHeader)
 
-      item.list.map(( forecast ) => {
-        newSeparator.appendChild( renderWeatherBox( forecast ) )
+      item.list.map(( forecast, index) => {
+        newSeparator.appendChild( renderWeatherBox( forecast, 'forecast', index) )
       })
       
-      forecastListSection.appendChild( newSeparator )
+      if (item.list.length !== 0) {
+        forecastListSection.appendChild( newSeparator )
+      }
     })
   }
 }
 
-const renderWeatherBox = function ( data = {} ) {
+const renderWeatherBox = function ( data = {}, type = 'current', index = null ) {
+  const times = ['Pagi', 'Siang', 'Sore', 'Malam']
   // create weather-box parent
   let weatherBox = document.createElement('div')
   weatherBox.className = 'weather-box'
+  if (type === 'forecast') {
+    weatherBox.className = `weather-box ${ times[ index ].toLowerCase() }`
+  }
 
-  // header inside weather-box
-  // if ( data.name !== undefined ) {
-  //   let weatherBoxHeader = document.createElement('h3')
-  //   weatherBoxHeader.innerText = data.name
-  //   weatherBox.appendChild( weatherBoxHeader )
-  // }
-
+  //first section
+  let newSection = document.createElement('section')
   // temp section --start--
   let tempSection = document.createElement('div')
   tempSection.className = 'temp'
@@ -107,10 +113,10 @@ const renderWeatherBox = function ( data = {} ) {
 
   // temp in Celcius
   let tempText = document.createElement('span')
-  tempText.innerText = `${ convertTemp( data.main.temp ) } ˚C`
+  tempText.innerText = `${ Math.floor(data.main.temp )} ˚C`
   tempSection.appendChild( tempText )
 
-  weatherBox.appendChild( tempSection )
+  newSection.appendChild( tempSection )
   // temp section --end--
 
   // description section --start--
@@ -127,22 +133,79 @@ const renderWeatherBox = function ( data = {} ) {
   desc2.innerText = data.weather[0].description
   weatherDesc.appendChild( desc2 )
 
-  weatherBox.appendChild( weatherDesc )
+  newSection.appendChild( weatherDesc )
   // description section --end--
 
-  // weather date
-  let weatherDate = document.createElement('div')
-  weatherDate.className = 'date'
-  weatherDate.innerText = renderDate( data.dt )
-  weatherBox.appendChild( weatherDate )
+  if (type === 'current') {
+    // weather date
+    let weatherDate = document.createElement('div')
+    weatherDate.className = 'date'
+    weatherDate.innerText = renderDate( data.dt )
+    newSection.appendChild( weatherDate )
+  } else {
+    let weatherDate = document.createElement('div')
+    weatherDate.className = 'date'
+    weatherDate.innerText = times[ index ]
+    newSection.appendChild( weatherDate )
+  }
+
+  //add the section to box
+  weatherBox.appendChild( newSection )
+  // ---- end first section ---
+
+  // ---- second section ----
+  newSection = document.createElement('section')
+
+  if (type === 'current') {
+    // Sunrise
+    let newPhar = document.createElement('p')
+    newPhar.innerHTML = `Sunrise <span>${ renderDate(data.sys.sunrise).split(' ')[1] }</span>`
+    newSection.appendChild( newPhar )
+
+    // Sunset
+    newPhar = document.createElement('p')
+    newPhar.innerHTML = `Sunset <span>${ renderDate(data.sys.sunset).split(' ')[1] }</span>`
+    newSection.appendChild( newPhar )
+  }
+
+  // Wind
+  newPhar = document.createElement('p')
+
+  const arrows = ["↑", "↗", "→", "↘", "↓", "↙", "←", "↖"]
+  newPhar.innerHTML = `Wind <span>${ arrows[ Math.floor(( (data.wind.deg + 22) % 360 ) / 45) ] } ${ data.wind.speed } m/s</span>`
+  newSection.appendChild( newPhar )
+
+  // Humidity
+  newPhar = document.createElement('p')
+  newPhar.innerHTML = `Humidity <span>${ data.main.humidity }%</span>`
+  newSection.appendChild( newPhar )
+
+  //Pressure
+  newPhar = document.createElement('p')
+  newPhar.innerHTML = `Pressure <span>${ data.main.pressure } hPa</span>`
+  newSection.appendChild( newPhar )
+
+  //Sea Level
+  newPhar = document.createElement('p')
+  newPhar.innerHTML = `Sea Level <span>${ data.main.sea_level } hPa</span>`
+  newSection.appendChild( newPhar )
+
+  //Ground Level
+  newPhar = document.createElement('p')
+  newPhar.innerHTML = `Ground Level <span>${ data.main.grnd_level } hPa</span>`
+  newSection.appendChild( newPhar )
+
+  //add the section to box
+  weatherBox.appendChild( newSection )
+  // ---- end second section ----
 
   return weatherBox
 }
 
-const convertTemp = function ( temp = 0 ) {
-  // convert Kelvin to Celcius
-  return Math.floor(temp - 273.15)
-}
+// const convertTemp = function ( temp = 0 ) {
+//   // convert Kelvin to Celcius
+//   return Math.floor(temp - 273.15)
+// }
 
 const renderDate = function ( timestamp = null ) {
   const dt = new Date( timestamp * 1000 )

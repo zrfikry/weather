@@ -7,17 +7,17 @@ body {
 .weather-box {
   display: inline-flex;
   justify-content: space-between;
-  flex-direction: column;
   background: #fff;
   position: relative;
-  padding: 1rem;
-  min-width: 9vw;
+  padding: .5rem;
+  min-width: 22vw;
   top: 0;
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   transition: all 0.3s cubic-bezier(.25,.8,.25,1);
   border-radius: .5rem;
   text-align: center;
   margin: .25rem;
+  border: .2rem solid transparent;
 }
 
 .weather-box:hover {
@@ -25,31 +25,56 @@ body {
   top: -.5rem;
 }
 
-.weather-box > .description {
+.weather-box > section {
+  padding: .5rem;
+}
+
+.weather-box > section:first-child {
+  border-right: 1px solid #e2e1e0;
+  width: 45%;
+}
+
+.weather-box > section:last-child {
+  text-align: initial;
+  width: 55%;
+}
+
+.weather-box > section:last-child p {
+  font-size: .8rem;
+  line-height: 1.1rem;
+}
+
+.weather-box > section:last-child p span {
+  color: #000;
+  font-weight: 600;
+  text-transform: initial;
+}
+
+.weather-box .description {
   margin-bottom: .5rem;
 }
 
-.weather-box h3, .weather-box > .description p {
+.weather-box h3, .weather-box p {
   margin: 0;
   text-transform: capitalize;
 }
 
-.weather-box > .description p {
+.weather-box p {
   color: rgb(90, 90, 90);
 }
 
-.weather-box > .temp {
+.weather-box .temp {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.weather-box > .temp span {
+.weather-box .temp span {
   font-weight: 300;
   font-size: 1.5rem;
 }
 
-.weather-box > .date {
+.weather-box .date {
   color: rgb(120, 120, 120);
   font-size: .85rem;
 }
@@ -60,9 +85,25 @@ body {
 }
 
 .date-separator:not(:last-child) {
-  border-bottom: .2rem dashed #000;
+  border-bottom: .1rem solid rgba(0,0,0, .1);
 }
 
 .date-separator h3 {
   font-weight: 300;
+}
+
+.weather-box.pagi {
+  border-color: #fff176;
+}
+
+.weather-box.siang {
+  border-color: #ffc107;
+}
+
+.weather-box.sore {
+  border-color: #ff9800;
+}
+
+.weather-box.malam {
+  border-color: #5c6bc0;
 }
