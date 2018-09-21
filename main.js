@@ -145,7 +145,7 @@ const renderWeatherBox = function ( data = {}, type = 'current', index = null ) 
   } else {
     let weatherDate = document.createElement('div')
     weatherDate.className = 'date'
-    weatherDate.innerText = times[ index ]
+    weatherDate.innerText = `${ times[ index ] } - ${ renderDate( data.dt ).split(' ')[1] }`
     newSection.appendChild( weatherDate )
   }
 
