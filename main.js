@@ -5,8 +5,8 @@ const iconUrl = 'https://openweathermap.org/img/w'
 
 document.body.onload = init
 
-let weatherData = {}
-let weather5Days = {}
+let weatherData = null
+let weather5Days = null
 async function init () {
   weatherData = await fetchData(`${ apiUrl }/weather?id=${ cityId }&appid=${ apiKey }`)
   weather5Days = await fetchData(`${ apiUrl }/forecast?id=${ cityId }&appid=${ apiKey }`)
@@ -19,7 +19,7 @@ const fetchData = function (url = '') {
   .then( ( data ) => data )
   .catch( ( err ) => {
     console.log('Error: ', err)
-    return {}
+    return null
   } )
 }
 
@@ -27,16 +27,14 @@ const currentWeather = document.querySelector('#currentWeather')
 const forecastListSection = document.querySelector('#forecastList')
 
 const render = function () {
-  currentWeather.innerHTML = ''
-
-  if ( weatherData !== {} ) {
+  if ( weatherData !== null ) {
     let mainHeader = document.createElement('h2')
     mainHeader.innerText = 'Current Weather'
     currentWeather.appendChild( mainHeader )
     currentWeather.appendChild( renderWeatherBox( weatherData, 'current' ) )
   }
 
-  if ( weather5Days !== {} ) {
+  if ( weather5Days !== null ) {
     let mainHeader = document.createElement('h2')
     mainHeader.innerText = '5 Days Forecast'
     forecastListSection.appendChild( mainHeader )
@@ -51,7 +49,7 @@ const render = function () {
       let y = dt.getFullYear()
       let fullDate = `${ d }/${ m }/${ y }`
       let dateIndex = dateList.findIndex( ( item ) => item.date === fullDate )
-      if (dateList[ dateIndex ] === undefined) {
+      if ( dateList[ dateIndex ] === undefined ) {
         dateList.push({ date: fullDate, list: [] })
       }
     })
@@ -142,17 +140,18 @@ const renderWeatherBox = function ( data = {} ) {
 }
 
 const convertTemp = function ( temp = 0 ) {
+  // convert Kelvin to Celcius
   return Math.floor(temp - 273.15)
 }
 
 const renderDate = function ( timestamp = null ) {
   const dt = new Date( timestamp * 1000 )
-  const dayList = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-  let day = dt.getDay()
+  // const dayList = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  // let day = dt.getDay()
   let d = `0${ dt.getDate() }`.slice(-2)
   let m = `0${ dt.getMonth() + 1 }`.slice(-2)
   let y = dt.getFullYear()
   let h = `0${ dt.getHours() }`.slice(-2)
-  let min = `0${dt.getMinutes()}`.slice(-2)
+  let min = `0${ dt.getMinutes() }`.slice(-2)
   return `${ d }/${ m }/${ y } ${ h }:${ min }`
 }
