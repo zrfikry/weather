@@ -41,7 +41,7 @@ body {
 
 .weather-box > section:last-child p {
   font-size: .8rem;
-  line-height: 1.2rem;
+  line-height: 1rem;
 }
 
 .weather-box > section:last-child p span {
@@ -92,18 +92,18 @@ body {
   font-weight: 300;
 }
 
-.weather-box.pagi {
+.weather-box.morning {
   border-color: #fff176;
 }
 
-.weather-box.siang {
+.weather-box.noon {
   border-color: #ffc107;
 }
 
-.weather-box.sore {
+.weather-box.afternoon {
   border-color: #ff9800;
 }
 
-.weather-box.malam {
+.weather-box.night {
   border-color: #5c6bc0;
 }
